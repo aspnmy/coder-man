@@ -106,21 +106,27 @@ main() {
 
     case $choice in
         0)
+            ck_install_jq
             bud_docker_alpine_base
             ;;
         1)
+            ck_install_jq
             bud_docker_cnbase
             ;;
         2)
+            ck_install_jq
             bud_docker_def
             ;;
         3)
+            ck_install_jq
             bud_docker_cnoffline
             ;;
         4)
+            ck_install_jq
             bud_docker_cnofflineMini
             ;;
         5)
+            ck_install_jq
             bud_docker_cnofflineSK
             ;;
         *)

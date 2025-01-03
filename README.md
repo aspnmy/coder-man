@@ -1,4 +1,4 @@
-# docker部署-特别说明
+# coder-man-特别说明
 - 感谢原作者的分享，根据原作者的分享代码重新修改的业务分支coder-man，更改了易用性的设置
 - 主要修改的地方如下：
 - 1、官方离线版的基础镜像，定期上传到aspnmy/coder-man:base-${version},目前最新的是v2.18.0 ，最稳定的是v2.17.3 , 官方离线版基础镜像没有打包plugins和templates
@@ -7,51 +7,22 @@
 - 4、易用性的改变主要是方便国内镜像注册表或者docker官方注册表，拉取即用无需关注是否需要外部拉取资源的这个问题（所以镜像体积比较大-但是方便给人部署），原作者的设计是把打包plugins拉取到宿主机共享文件./plugins中 以-v 参数提供给coder容器使用，这样的形式更适合自建业务开发。而我们合并打包plugins的原因是，因为有时候经常要替客户部署，一键拉取更简单，哪怕提供给客户拉取，也是包含plugins的更方便使用。
 - 当然更方便的方案就是plugins也提供国内镜像源，但是维护量较大。后续会提供一个plugins的国内下载镜像源，这样部署coder容器体积更小，拉取更快。
 
+# 使用说明
+## 快速构建
+- 拉取本仓库到本地,按照下面运行命令
+```bash
+cd ./bin
+bash build_images.sh
 
-# coder-cn 版
+```
+- 根据命令提示构建自己需要的离线镜像
 
-- 主要解决国内环境下无法访问业务节点问题
-![image](https://github.com/user-attachments/assets/4c29af9a-8b18-412e-9397-cff28edb03c9)
+## 快速使用
+- 安装下面部署方式，拉取现成的库进行使用
 
-
-本仓库提供了一个离线安装 coder 的示例，两个可以使用的 coder 模板：
-
-1. 在 proxmox 上快速搭建 vm
-2. 在 一台安装有 docker 的 linux 机器使用 docker 快速创建开发环境
-
-非常适合中国大陆的个人开发者初步把玩一下 coder。
-
-本文档不是一个严谨的、一步一步指导你完成所有概念学习和使用的文档，你必须自己完成大部分的学习和探索任务，本仓库只是提供了在中国大陆完成 coder 调测的方法。
-
-
-
-## 一些基础知识
-coder 支持在各种云服务器上快速创建开发环境，并且你可以一键使用在线版的 vscode（code server）连接到这个开发环境。
-
-不过使用云服务器开发？对于普通的个人开发者来说基本用不上。
-
-然而 coder/terraform 还支持自定义的 provider（provider可以理解为服务商，阿里云或者亚马逊，给你提供机器），而 pve 和你一台安装了 docker 的 linux 机器就摇身一变，变成了 provider。
-
-通过 telmate/proxmox provider，你可以在 pve 上基于 iso 或已有的 vm 并配合 cloud-init 快速搭建一台开发环境。
-
-通过 kreuzwerker/docker provider，你可以在一台安装了 docker 的 linux 机器上，创建任意的镜像。
-
-本仓库就提供了两个快速在 pve 和 docker 上快速部署开发环境的 coder 模板。
-
-## 安装离线版的 coder
-因为中国网络的原因，个人开发者应该首选离线版 coder。
-
-coder 官网给出了离线版 coder 的安装步骤，但是仍然建议你用本仓库的 Dockerfile，因为离线版的 coder 仍然有一些你无法下载下来的东西，比如 hashicorp/null hashicorp/local 等。
-
-因此我将这些包下载后，上传到了 regfistry.terraform.io 文件夹中。
-### 前提条件
-一个用于安装离线 docker 版本 coder 的 linux 虚拟机，你需要在此虚拟机上事先安装好 docker 和 docker compose，并设置好中国可用的镜像（2024年后国内docker使用更难了，关于如何设置后面我再写一篇文章）
-
-### 安装步骤
-1. 在要安装 coder 的机器上下载本仓库，执行
 ```bash
 services:
-  coder-man-cn:    
+  coder-man-cn:
     container_name: coder-man-cn-${ver-"v2.18.0-cn"}
     image: aspnmy/coder-man:${ver-"v2.18.0-cn"}
     ports:
@@ -61,13 +32,13 @@ services:
       CODER_BLOCK_DIRECT: "true" # force SSH traffic through control plane's DERP proxy
       CODER_DERP_SERVER_STUN_ADDRESSES: "disable" # Only use relayed connections
       CODER_UPDATE_CHECK: "false" # Disable automatic update checks
-      ## ---- 
+      ## ----
       CODER_PG_CONNECTION_URL: "postgresql://${usrname:-latest}:${usrpasswd:-latest}@${host:-127.0.0.1}:${port:-5432}/coder?sslmode=disable"
       CODER_HTTP_ADDRESS: "0.0.0.0:7080"
       # You'll need to set CODER_ACCESS_URL to an IP or domain
       # that workspaces can reach. This cannot be localhost
       # or 127.0.0.1 for non-Docker templates!
-      CODER_ACCESS_URL: "${CODER_ACCESS_URL-http://127.0.0.1:7080}"
+      CODER_ACCESS_URL: "${CODER_ACCESS_URL-http://192.168.0.1:7080}"
     # If the coder user does not have write permissions on
     # the docker socket, you can uncomment the following
     # lines and set the group ID to one that has write
@@ -76,51 +47,45 @@ services:
       - "998" # docker group on host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./coder-man-cn/v2.18.0/registry.terraform.io:/home/coder/.terraform.d/plugins/registry.terraform.io
+      - coder-man-cn:/home/coder/.terraform.d/plugins/registry.terraform.io
 
-   ```
-2. 启动后，设置用户名、邮箱（一些模板会将用户名和邮箱直接作为 git 的 user.name 和 user.email，建议不要随意设置）和密码
+volumes:
+    coder-man-cn:
 
 
-## 创建 pve vm 类型的开发环境 
+```
+# docker 镜像 tag 说明
+## aspnmy/coder-man:base-${version}
+- 带有base字样的是基础镜像，不含离线组件
+- 如果base后面带有cn指的是镜像源为国内的镜像，不含cn或带有en的是指国际版镜像
 
-### 前提条件
-1. 安装好的 pve
-2. pve 登录账号（最好选用 pam），密码，该账号的 token id 和 token secret
-3. 一个事先安装好的 vm 以及它的名称，如 ubuntu2204
-4. 离线版的 coder
+## aspnmy/coder-man:${version}-cn
+- 不含base的镜像，是指完全离线镜像。
+- 后面带有cn代表镜像源为国内
+- 后面带有en代表镜像源使用国外
+- 后面带有mini代表使用更小的基础镜像构建的离线镜像
+- 后面带有mini-SK代表使用私库部署的方式构建的离线镜像
 
-### 步骤
+# 参数配置说明
+## 文件位置
+- 参数文件位于./bin/Core/Config_env.json 文件结构如下:
 
-1. 登录 coder，点击 Templates，创建一个模板
-2. 可以选择 scratch 从 0 创建，然后将本仓库的 templates 下的 pve 中的文件粘贴进去
-3. 也可以将本仓库的 templates 下的 pve 中的文件，压缩上传。注意，优选 tar格式，zip 经我实测会卡住。
-   ```text
-   pve.tar
-      | -- main.tf
-      | -- cloud-config.yaml.tfpl
-   ```
-### 更改 pve 相关的参数
-请花点时间看看 main.tf 的构成，在 pve 中的 main.tf 中搜索 "请修改" 字样，将这些字样修改为你的用户名，密码，机器地址等。
+```json
+{
+    "logs_debug": "0",
+    "alpine_baseVer":"alpine-3.21.0",
+    "cn_baseVer": "base-v2.18.1",
+    "defVer":"v2.18.1-en",
+    "cnoffVer":"v2.18.1-cn",
+    "cnoffMiniVer":"v2.18.1-cn-mini",
+    "cnoffMiniSKVer":"v2.18.1-cn-mini-sk"
+}
+```
+- 参数的值代表你要构建的镜像版本号 需要和构建文件中的ver保持一致
 
-点击 build 通过后，就可以创建 workspace 了。
+## 常见问题
+- 运行本程序需要jq组件，构建工具自动会安装jq组件，如果没有安装成功，请先自行安装
 
-## 创建 docker 类型的开发环境
-该部分内容因为不需要 pve，对于只想了解 coder 是什么的人更为适合。
-
-### 前提条件
-1. 离线版的 coder
-
-### 步骤
-1. 点击 Templates，创建一个模板
-2. 可以选择 scratch 从 0 创建，然后将本仓库的 templates 下的 docker 中的文件粘贴进去
-3. 也可以将本仓库的 templates 下的 docker 中的文件，压缩上传。注意，优选 tar格式，zip 经我实测会卡住。
-   ```text
-   docker.tar
-      | -- main.tf
-      | -- build
-          | -- *
-   ```
-4. 默认的 Dockerfile 带了 python，node，java，go，rust 等 sdk，你可以删除你不需要的，或者将这些分散的命令放入一个 RUN 命令中以减小镜像大小
-
-点击 build 通过后，就可以创建 workspace 了。
+# 后续开发业务
+- 后续会增加一些其他镜像的构建工具
+- 主要会做一个web_UI,使用nextjs套件来调取sh脚本来实现web业务中的构建，方便操作一点
