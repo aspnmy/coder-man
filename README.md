@@ -1,5 +1,6 @@
 # coder-man-特别说明
 - 感谢原作者的分享，根据原作者的分享代码重新修改的业务分支coder-man，更改了易用性的设置
+- 原作者开源的版本：https://github.com/dev-easily/coder-templates.git
 - 主要修改的地方如下：
 - 1、官方离线版的基础镜像，定期上传到aspnmy/coder-man:base-${version},目前最新的是v2.18.0 ，最稳定的是v2.17.3 , 官方离线版基础镜像没有打包plugins和templates
 - 2、打包plugins和templates到部署镜像，定期上传到aspnmy/coder-man:${version}-cn ，如有要下载v2.18.0，就是 docker pull aspnmy/coder-man:v2.18.0-cn，如果后缀是en的代表镜像源为官方
