@@ -5,5 +5,6 @@
     "defVer":"v2.18.1-en",
     "cnoffVer":"v2.18.1-cn",
     "cnoffMiniVer":"v2.18.1-cn-mini",
-    "cnoffMiniSKVer":"v2.18.1-cn-mini-sk"
+    "cnoffMiniSKVer":"v2.18.1-cn-mini-sk",
+    "caddyBassVer":"base-caddy-v2.9.0-beta.3"
 }

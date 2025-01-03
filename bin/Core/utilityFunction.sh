@@ -156,8 +156,9 @@ fi
 
 get_Config_debug() {
     # 检查JSON文件是否存在
-    local config_dir=$(get_Script_dir_Config)
-    
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
+
     if [ ! -f "$config_dir" ]; then
         log "JSON file not found!"
         exit 1
@@ -170,7 +171,8 @@ get_Config_debug() {
 # coder的alpine基础镜像版本-未打包coder代码本身
 # 需要构建更小的coder镜像需要，一般直接以coder官方镜像为基础进行打包
 get_Config_alpine_baseVer() {
-    local config_dir=$(get_Script_dir_Config)
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
 
     if [ ! -f "$config_dir" ]; then
         log "JSON file not found!"
@@ -185,7 +187,8 @@ get_Config_alpine_baseVer() {
 
 # 国内版基础镜像-未包含离线组件
 get_Config_cnbaseVer() {
-    local config_dir=$(get_Script_dir_Config)
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
 
     if [ ! -f "$config_dir" ]; then
         log "JSON file not found!"
@@ -198,7 +201,8 @@ get_Config_cnbaseVer() {
 
 # coder官方离线版镜像-只包含基础业务
 get_Config_defVer() {
-    local config_dir=$(get_Script_dir_Config)
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
 
     if [ ! -f "$config_dir" ]; then
         log "JSON file not found!"
@@ -211,7 +215,8 @@ get_Config_defVer() {
 
 # 国内离线版完整镜像-包含常用的开发组件
 get_Config_cnoffVer() {
-    local config_dir=$(get_Script_dir_Config)
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
 
     if [ ! -f "$config_dir" ]; then
         log "JSON file not found!"
@@ -224,7 +229,8 @@ get_Config_cnoffVer() {
 
 # 国内离线版完整镜像(mini版)-包含常用的开发组件
 get_Config_cnoffMiniVer() {
-    local config_dir=$(get_Script_dir_Config)
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
 
     if [ ! -f "$config_dir" ]; then
         log "JSON file not found!"
@@ -237,7 +243,8 @@ get_Config_cnoffMiniVer() {
 
 # 组件以私库提供下载的形式构建，私库可以是国内镜像站等能使用wget或者curl形式下载的位置
 get_Config_cnoffMiniSKVer() {
-    local config_dir=$(get_Script_dir_Config)
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
 
     if [ ! -f "$config_dir" ]; then
         log "JSON file not found!"
@@ -248,6 +255,20 @@ get_Config_cnoffMiniSKVer() {
     echo "$res"
 }
 
+# coder反代常用的caddy基础镜像
+# 方便先构建成caddy-base镜像再和coder镜像进行整合(多阶段构建)减小镜像体积
+get_Config_caddyBaseVer() {
+    local config_dir
+    config_dir=$(get_Script_dir_Config)
+
+    if [ ! -f "$config_dir" ]; then
+        log "JSON file not found!"
+        exit 1
+    fi
+    # 使用jq解析JSON文件中的caddyBassVer字段
+    res=$(jq -r '.["caddyBassVer"]' "$config_dir")
+    echo "$res"
+}
 
 
 get_Time() {
