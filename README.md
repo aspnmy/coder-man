@@ -19,7 +19,7 @@ bash build_images.sh
 - 根据命令提示构建自己需要的离线镜像
 
 ## 快速使用
-- 安装下面部署方式，拉取现成的库进行使用
+- 安照下面部署方式，拉取现成的库进行使用
 
 ```bash
 services:
@@ -39,6 +39,8 @@ services:
       # You'll need to set CODER_ACCESS_URL to an IP or domain
       # that workspaces can reach. This cannot be localhost
       # or 127.0.0.1 for non-Docker templates!
+      # 此处输入可以外网访问的域名或者局域网域名 要带有协议头 推荐使用http协议
+      # 如需https协议可以用web_server进行反代
       CODER_ACCESS_URL: "${CODER_ACCESS_URL-http://192.168.0.1:7080}"
     # If the coder user does not have write permissions on
     # the docker socket, you can uncomment the following
@@ -66,6 +68,7 @@ volumes:
 - 后面带有en代表镜像源使用国外
 - 后面带有mini代表使用更小的基础镜像构建的离线镜像
 - 后面带有mini-SK代表使用私库部署的方式构建的离线镜像
+- 后面带有nginx或者caddy的代表已经包含反代用的web_server(推荐这个版本)
 
 # 参数配置说明
 ## 文件位置
@@ -82,7 +85,7 @@ volumes:
     "cnoffMiniSKVer":"v2.18.1-cn-mini-sk"
 }
 ```
-- 参数的值代表你要构建的镜像版本号 需要和构建文件中的ver保持一致
+- 参数的值代表你要构建的镜像版本号 需要和构建文件中的from语句中的官方vertion保持一致
 
 ## 常见问题
 - 运行本程序需要jq组件，构建工具自动会安装jq组件，如果没有安装成功，请先自行安装
