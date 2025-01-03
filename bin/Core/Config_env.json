@@ -1,0 +1,9 @@
+{
+    "logs_debug": "0",
+    "alpine_baseVer":"alpine-3.21.0",
+    "cn_baseVer": "base-v2.18.1",
+    "defVer":"v2.18.1-en",
+    "cnoffVer":"v2.18.1-cn",
+    "cnoffMiniVer":"v2.18.1-cn-mini",
+    "cnoffMiniSKVer":"v2.18.1-cn-mini-sk"
+}

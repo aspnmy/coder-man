@@ -1,0 +1,6 @@
+{
+    "logs_debug": "0",
+    "baseVer": "alpine-3.21.0",
+    "defVer":"coder-v2.18.1-en",
+    "cnVer":"coder-v2.18.1-cn"
+}

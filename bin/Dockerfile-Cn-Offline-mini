@@ -1,0 +1,16 @@
+ARG CODER_VERSION=v2.18.1
+
+FROM aspnmy/coder-man:base-${CODER_VERSION:-v2.18.0}
+
+USER root
+
+# 加入离线组件
+ADD ../../registry.terraform.io /home/coder/.terraform.d/plugins/registry.terraform.io
+WORKDIR /home/coder/.terraform.d/plugins/registry.terraform.io
+
+RUN chown -R coder:coder /home/coder/.terraform*
+WORKDIR /home/coder
+USER coder
+
+# Use the .terraformrc file to inform Terraform of the locally installed providers.
+ENV TF_CLI_CONFIG_FILE=/home/coder/.terraformrc

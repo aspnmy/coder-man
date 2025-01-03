@@ -1,0 +1,22 @@
+FROM ghcr.io/coder/coder:v2.18.1
+
+USER root
+
+COPY ./letsEncrypt/letsEncrypt.crt /usr/local/share/ca-certificates/letsEncrypt.crt
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
+    && apk update \
+    && apk add curl unzip ca-certificates && rm -rf /var/cache/apk/* \
+    && update-ca-certificates
+
+# https://coder.com/docs/install/offline
+RUN mkdir -p /home/coder/.terraform.d/plugins/registry.terraform.io
+ADD filesystem-mirror.tfrc /home/coder/.terraformrc
+WORKDIR /home/coder/.terraform.d/plugins/registry.terraform.io
+
+
+RUN chown -R coder:coder /home/coder/.terraform*
+WORKDIR /home/coder
+USER coder
+
+# Use the .terraformrc file to inform Terraform of the locally installed providers.
+ENV TF_CLI_CONFIG_FILE=/home/coder/.terraformrc
